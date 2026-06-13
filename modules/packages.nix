@@ -9,6 +9,8 @@
     vim
     wget
     git
+    gh
+    ripgrep
     bun
     code-cursor-fhs
     discord

@@ -7,6 +7,8 @@ changes as declarative infrastructure changes by default.
 
 - Prefer editing the flake-based NixOS configuration in
   `/home/quill/nix-config`.
+- This repository is the active source of truth. Do not redirect configuration
+  work to a separate `nix-home` checkout.
 - Keep the flake modular as it grows. Prefer small concern-based modules over a
   large `configuration.nix`: host/global basics in `configuration.nix`,
   machine-level desktop/services/packages in `modules/`, and user Home Manager
@@ -42,6 +44,7 @@ changes as declarative infrastructure changes by default.
 
 - Keep changes cloneable: a fresh checkout of the flake should be enough to
   reproduce the intended system and user environment.
-- Keep Plasma available as a fallback unless the user explicitly asks to remove
-  it.
+- Preserve the currently working Hyprland-first desktop setup unless the user
+  asks for a session or desktop change. Plasma may be present in the config, but
+  do not treat it as a required fallback policy.
 - Prefer small, reviewable Nix changes over ad hoc local state.
