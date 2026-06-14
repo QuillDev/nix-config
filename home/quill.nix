@@ -67,7 +67,10 @@ in
       programs.home-manager.enable = true;
       xdg.enable = true;
 
-      programs.bash.enable = true;
+      programs.bash = {
+        enable = true;
+        shellAliases.cc = "claude";
+      };
 
       xdg.configFile."ashell/config.toml".text = ''
         log_level = "warn"
