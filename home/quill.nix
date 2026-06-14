@@ -118,10 +118,16 @@ let
 in
 
 {
+  # Fish is enabled at the NixOS level so it is a registered login shell
+  # (/etc/shells) and gets its system-wide completions wired up. Per-user
+  # interactive config lives in the Home Manager block below.
+  programs.fish.enable = true;
+
   users.users."quill" = {
     isNormalUser = true;
     description = "Robert Brunson";
     extraGroups = [ "networkmanager" "wheel" ];
+    shell = pkgs.fish;
     packages = with pkgs; [
       kdePackages.kate
     ];
@@ -150,12 +156,68 @@ in
       programs.home-manager.enable = true;
       xdg.enable = true;
 
+      # Fish is the interactive shell. Bash stays enabled so that
+      # `#!/usr/bin/env bash` scripts and `bash -lc` always have a sane
+      # environment; its aliases only apply if you drop into bash manually.
       programs.bash = {
         enable = true;
         shellAliases = {
           cc = "IS_SANDBOX=1 claude --dangerously-skip-permissions";
           sudo = "sudo ";
         };
+      };
+
+      programs.fish = {
+        enable = true;
+        shellAliases = {
+          # `sudo `-with-trailing-space is a bash alias-expansion hack and is
+          # unnecessary in fish, so only the meaningful alias is ported.
+          cc = "IS_SANDBOX=1 claude --dangerously-skip-permissions";
+          # Default the nicer tools. `ll`/`la` keep the long/all views handy;
+          # `cat` -> bat for syntax-highlighted paging.
+          ls = "eza --git --icons=auto";
+          ll = "eza --git --icons=auto -l";
+          la = "eza --git --icons=auto -la";
+          cat = "bat";
+        };
+        interactiveShellInit = ''
+          # Quieter startup: drop the default fish greeting.
+          set -g fish_greeting
+        '';
+      };
+
+      # Pink-on-black prompt (palette above). Home Manager auto-injects the
+      # fish/bash init hooks for starship and the tools below.
+      programs.starship = {
+        enable = true;
+        settings = {
+          add_newline = false;
+          character = {
+            success_symbol = "[❯](bold #ff4fa3)";
+            error_symbol = "[❯](bold #ff5c8a)";
+            vimcmd_symbol = "[❮](bold #ff79bd)";
+          };
+          directory.style = "bold #ff79bd";
+          git_branch.style = "#cdbfca";
+          git_status.style = "#f5a524";
+        };
+      };
+
+      # Interactive ergonomics, all declarative and Nix-managed.
+      programs.fzf.enable = true; # ctrl-r history / ctrl-t file search
+      programs.zoxide.enable = true; # smarter `cd` (use `z <dir>`)
+      programs.eza = {
+        enable = true;
+        git = true;
+        icons = "auto";
+      };
+      programs.bat = {
+        enable = true;
+        config.theme = "base16";
+      };
+      programs.direnv = {
+        enable = true;
+        nix-direnv.enable = true; # fast, cached `.envrc` for Nix shells
       };
 
       xdg.configFile."ashell/config.toml".text = ''
