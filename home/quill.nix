@@ -35,7 +35,19 @@ let
           "$eww" close usage
           "$eww" update usage_open=false
         else
-          "$eww" open usage
+          # Centre the popup under the cursor (which is on the chip we clicked),
+          # clamped to the screen. Falls back to the right edge without Hyprland.
+          # pw ~= min-width(304) + padding(36) + border(4).
+          pw=344
+          mw=$(hyprctl monitors -j 2>/dev/null \
+                 | ${pkgs.jq}/bin/jq -r 'first(.[]|select(.focused))|(.width/.scale)|floor' 2>/dev/null)
+          cx=$(hyprctl cursorpos 2>/dev/null | ${pkgs.coreutils}/bin/tr -dc '0-9,' | ${pkgs.coreutils}/bin/cut -d, -f1)
+          [ -n "$mw" ] || mw=1920
+          [ -n "$cx" ] || cx=$((mw - 2))
+          x=$((cx - pw / 2))
+          [ "$x" -lt 6 ] && x=6
+          max=$((mw - pw - 6)); [ "$x" -gt "$max" ] && x=$max
+          "$eww" open usage --arg xpos="$x"
           "$eww" update usage_open=true
         fi
         ;;
@@ -251,13 +263,16 @@ in
         ; Full-screen transparent backdrop so a click anywhere outside the popup
         ; dismisses it (like the other bar menus). The popup itself is wrapped in
         ; an eventbox whose no-op onclick swallows clicks so they don't dismiss.
-        (defwindow usage
+        ; `xpos` (px from the left edge) is computed at open time by
+        ; agent-usage-popup to centre the popup under the clicked chip.
+        (defwindow usage [xpos]
           :monitor 0
-          :geometry (geometry :x "0px" :y "0px" :anchor "top right" :width "100%" :height "100%")
+          :geometry (geometry :x "0px" :y "0px" :anchor "top left" :width "100%" :height "100%")
           :stacking "overlay"
           (eventbox :class "backdrop" :onclick "${agent-usage-popup}/bin/agent-usage-popup close"
-            (box :orientation "v" :halign "end" :valign "start" :space-evenly false
-              (eventbox :onclick "true" (usage-content)))))
+            (box :orientation "v" :halign "start" :valign "start" :space-evenly false
+              (box :class "anchor" :style {"margin-left: " + xpos + "px;"} :orientation "v" :space-evenly false
+                (eventbox :onclick "true" (usage-content))))))
       '';
 
       xdg.configFile."eww/eww.scss".text = ''
@@ -270,8 +285,8 @@ in
           border: 2px solid ${palette.pink};
           border-radius: 14px;
           padding: 16px 18px;
-          /* top right bottom left: clear the bar, hug the right edge */
-          margin: 40px 8px 0 0;
+          min-width: 304px;        /* keep width predictable for centering */
+          margin-top: 36px;        /* drop just below the 34px-tall bar */
         }
 
         .title {
@@ -405,6 +420,10 @@ in
             rounding = 4
         }
 
+        # qmenu resizes its layer surface as results appear; without this Hyprland
+        # plays a stretch animation on each resize, making the prompt jump around.
+        layerrule = noanim, qmenu
+
         bind = ALT, Return, exec, $terminal
         bind = ALT, T, exec, $terminal
         bind = ALT, Space, exec, $launcher
@@ -479,6 +498,7 @@ in
         corner_radius     = 14.0
         border_width      = 2.0
         row_radius        = 8.0
+        result_gap        = 8.0
         font_family       = "Inter"
 
         [icons]
