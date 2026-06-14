@@ -114,7 +114,11 @@ in
 
       xdg.configFile."ghostty/config.ghostty".text = ''
         theme =
-        window-theme = dark
+        window-theme = ghostty
+        window-titlebar-background = ${palette.black}
+        window-titlebar-foreground = ${palette.text}
+        gtk-titlebar-style = tabs
+        gtk-single-instance = false
 
         background = ${palette.black}
         foreground = ${palette.text}
