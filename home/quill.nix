@@ -28,6 +28,14 @@ let
 
     exec ${kimi-code}/bin/kimi --yolo "$@"
   '';
+
+  screenshot-selection = pkgs.writeShellScriptBin "screenshot-selection" ''
+    set -euo pipefail
+
+    geometry="$(${pkgs.slurp}/bin/slurp -d)"
+    ${pkgs.grim}/bin/grim -g "$geometry" - | ${pkgs.wl-clipboard}/bin/wl-copy --type image/png
+    ${pkgs.libnotify}/bin/notify-send -u low -i camera-photo "Screenshot copied" "Selection copied to clipboard."
+  '';
 in
 
 {
@@ -52,6 +60,7 @@ in
         stateVersion = "26.05";
         packages = [
           kimi-yolo
+          screenshot-selection
         ];
       };
 
@@ -195,6 +204,7 @@ in
         bind = ALT, W, killactive
         bind = ALT SHIFT, Q, exit
         bind = ALT, F, fullscreen
+        bind = CTRL SHIFT, 5, exec, screenshot-selection
 
         bindel = , XF86AudioRaiseVolume, exec, ${pkgs.wireplumber}/bin/wpctl set-volume -l 1 @DEFAULT_AUDIO_SINK@ 5%+
         bindel = , XF86AudioLowerVolume, exec, ${pkgs.wireplumber}/bin/wpctl set-volume @DEFAULT_AUDIO_SINK@ 5%-
