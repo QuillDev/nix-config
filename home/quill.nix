@@ -284,7 +284,7 @@ in
       xdg.configFile."hypr/hyprpaper.conf".text = ''
         wallpaper {
             monitor = eDP-1
-            path = ${../assets/wallpapers/chatgpt-wallpaper.png}
+            path = ${../assets/wallpapers/nako-room.png}
             fit_mode = cover
         }
         splash = false
