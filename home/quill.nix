@@ -18,18 +18,28 @@ let
 
   kimi-code = pkgs.callPackage ../pkgs/kimi-code { };
   qmenu = inputs.qmenu.packages.${pkgs.system}.default;
-  agent-usage = pkgs.callPackage ../pkgs/agent-usage { };
+  agent-usage = inputs.agent-usage.packages.${pkgs.system}.default;
 
-  # Toggle the eww agent-usage popup; polling only runs while it is open
-  # (gated by the usage_open var in eww.yuck).
+  # Toggle (or explicitly close) the eww agent-usage popup; polling only runs
+  # while it is open (gated by the usage_open var in eww.yuck). The backdrop's
+  # click handler calls this with `close`.
   agent-usage-popup = pkgs.writeShellScriptBin "agent-usage-popup" ''
-    if ${pkgs.eww}/bin/eww active-windows 2>/dev/null | ${pkgs.gnugrep}/bin/grep -q usage; then
-      ${pkgs.eww}/bin/eww close usage
-      ${pkgs.eww}/bin/eww update usage_open=false
-    else
-      ${pkgs.eww}/bin/eww open usage
-      ${pkgs.eww}/bin/eww update usage_open=true
-    fi
+    eww=${pkgs.eww}/bin/eww
+    case "''${1:-toggle}" in
+      close)
+        "$eww" close usage
+        "$eww" update usage_open=false
+        ;;
+      *)
+        if "$eww" active-windows 2>/dev/null | ${pkgs.gnugrep}/bin/grep -q usage; then
+          "$eww" close usage
+          "$eww" update usage_open=false
+        else
+          "$eww" open usage
+          "$eww" update usage_open=true
+        fi
+        ;;
+    esac
   '';
 
   kimi-yolo = pkgs.writeShellScriptBin "kimi" ''
@@ -166,11 +176,12 @@ in
         # chip; listen_cmd streams Waybar-format JSON whose `alt` lights the alert
         # dot at >=80% or on error. Clicking toggles the eww popup with per-provider
         # logos and % bars. Icon is a Nerd Font gauge (U+F0E4) via symbols-only
-        # fallback. See pkgs/agent-usage and the eww.yuck below.
+        # fallback. Package: github:QuillDev/agent-usage (flake input); popup
+        # config is the eww.yuck below.
         [[CustomModule]]
         name = "AgentUsage"
         type = "Button"
-        icon = ""
+        icon = "${builtins.fromJSON ''""''}"
         listen_cmd = "${agent-usage}/bin/agent-usage --watch --interval 60"
         command = "${agent-usage-popup}/bin/agent-usage-popup"
         alert = "\"alt\":\"alert\""
@@ -193,50 +204,70 @@ in
         (defpoll usage
           :interval "30s"
           :run-while usage_open
-          :initial "{\"cc\":{\"name\":\"Claude Code\",\"present\":true,\"state\":\"ok\",\"pct\":0,\"caption\":\"…\",\"reset\":\"\"},\"cx\":{\"name\":\"Codex\",\"present\":true,\"state\":\"ok\",\"pct\":0,\"caption\":\"…\",\"reset\":\"\"},\"km\":{\"name\":\"Kimi\",\"present\":true,\"state\":\"ok\",\"pct\":0,\"caption\":\"…\",\"reset\":\"\"}}"
+          :initial "{\"cc\":{\"name\":\"Claude Code\",\"present\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"cx\":{\"name\":\"Codex\",\"present\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"km\":{\"name\":\"Kimi\",\"present\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}}}"
           "${agent-usage}/bin/agent-usage --eww")
 
-        (defwidget prow [logo name pct state caption reset visible]
-          (box :class "row" :orientation "h" :space-evenly false :spacing 12 :visible visible
-            (image :class "logo" :path logo :image-width 24 :image-height 24)
-            (box :orientation "v" :space-evenly false :hexpand true :spacing 3
-              (box :orientation "h" :space-evenly false
-                (label :class "name" :halign "start" :hexpand true :text name)
-                (label :class "pct" :halign "end" :text {pct + "%"}))
-              (progress :class {"bar bar-" + state} :value pct :orientation "h" :hexpand true)
-              (box :orientation "h" :space-evenly false
-                (label :class "caption" :halign "start" :hexpand true :text caption)
-                (label :class "reset" :halign "end" :text reset)))))
+        ; one window's bar: short label, coloured progress, percent, reset ETA
+        (defwidget barrow [label pct state reset visible]
+          (box :class "barrow" :orientation "h" :space-evenly false :spacing 8 :visible visible
+            (label :class "wlabel" :text label)
+            (progress :class {"bar bar-" + state} :value pct :orientation "h" :hexpand true)
+            (label :class "wpct" :text {pct + "%"})
+            (label :class "reset" :text reset)))
+
+        ; one provider: logo + name (+ error), then its 5h and weekly bars
+        (defwidget prow [logo name error
+                         w1l w1p w1s w1r w1v
+                         w2l w2p w2s w2r w2v
+                         visible]
+          (box :class "row" :orientation "v" :space-evenly false :spacing 5 :visible visible
+            (box :orientation "h" :space-evenly false :spacing 10
+              (image :class "logo" :path logo :image-width 20 :image-height 20)
+              (label :class "name" :halign "start" :hexpand true :text name)
+              (label :class "err" :halign "end" :text error :visible {error != ""}))
+            (barrow :label w1l :pct w1p :state w1s :reset w1r :visible w1v)
+            (barrow :label w2l :pct w2p :state w2s :reset w2r :visible w2v)))
 
         (defwidget usage-content []
-          (box :class "popup" :orientation "v" :space-evenly false :spacing 12
+          (box :class "popup" :orientation "v" :space-evenly false :vexpand false :valign "start" :spacing 14
             (label :class "title" :halign "start" :text "AGENT USAGE")
             (prow :logo "${agent-usage}/share/agent-usage/icons/claude.svg"
-                  :name {usage.cc.name} :pct {usage.cc.pct} :state {usage.cc.state}
-                  :caption {usage.cc.caption} :reset {usage.cc.reset} :visible {usage.cc.present})
+                  :name {usage.cc.name} :error {usage.cc.error} :visible {usage.cc.present}
+                  :w1l {usage.cc.w1.label} :w1p {usage.cc.w1.pct} :w1s {usage.cc.w1.state} :w1r {usage.cc.w1.reset} :w1v {usage.cc.w1.present}
+                  :w2l {usage.cc.w2.label} :w2p {usage.cc.w2.pct} :w2s {usage.cc.w2.state} :w2r {usage.cc.w2.reset} :w2v {usage.cc.w2.present})
             (prow :logo "${agent-usage}/share/agent-usage/icons/codex.svg"
-                  :name {usage.cx.name} :pct {usage.cx.pct} :state {usage.cx.state}
-                  :caption {usage.cx.caption} :reset {usage.cx.reset} :visible {usage.cx.present})
+                  :name {usage.cx.name} :error {usage.cx.error} :visible {usage.cx.present}
+                  :w1l {usage.cx.w1.label} :w1p {usage.cx.w1.pct} :w1s {usage.cx.w1.state} :w1r {usage.cx.w1.reset} :w1v {usage.cx.w1.present}
+                  :w2l {usage.cx.w2.label} :w2p {usage.cx.w2.pct} :w2s {usage.cx.w2.state} :w2r {usage.cx.w2.reset} :w2v {usage.cx.w2.present})
             (prow :logo "${agent-usage}/share/agent-usage/icons/kimi.svg"
-                  :name {usage.km.name} :pct {usage.km.pct} :state {usage.km.state}
-                  :caption {usage.km.caption} :reset {usage.km.reset} :visible {usage.km.present})))
+                  :name {usage.km.name} :error {usage.km.error} :visible {usage.km.present}
+                  :w1l {usage.km.w1.label} :w1p {usage.km.w1.pct} :w1s {usage.km.w1.state} :w1r {usage.km.w1.reset} :w1v {usage.km.w1.present}
+                  :w2l {usage.km.w2.label} :w2p {usage.km.w2.pct} :w2s {usage.km.w2.state} :w2r {usage.km.w2.reset} :w2v {usage.km.w2.present})))
 
+        ; Full-screen transparent backdrop so a click anywhere outside the popup
+        ; dismisses it (like the other bar menus). The popup itself is wrapped in
+        ; an eventbox whose no-op onclick swallows clicks so they don't dismiss.
         (defwindow usage
           :monitor 0
-          :geometry (geometry :x "10px" :y "46px" :anchor "top right" :width "340px" :height "0px")
+          :geometry (geometry :x "0px" :y "0px" :anchor "top right" :width "100%" :height "100%")
           :stacking "overlay"
-          (usage-content))
+          (eventbox :class "backdrop" :onclick "${agent-usage-popup}/bin/agent-usage-popup close"
+            (box :orientation "v" :halign "end" :valign "start" :space-evenly false
+              (eventbox :onclick "true" (usage-content)))))
       '';
 
       xdg.configFile."eww/eww.scss".text = ''
         * { all: unset; }
+
+        .backdrop { background-color: transparent; }
 
         .popup {
           background-color: rgba(5, 5, 7, 0.97);
           border: 2px solid ${palette.pink};
           border-radius: 14px;
           padding: 16px 18px;
-          margin: 4px;
+          /* top right bottom left: clear the bar, hug the right edge */
+          margin: 40px 8px 0 0;
         }
 
         .title {
@@ -246,19 +277,22 @@ in
           font-weight: 700;
         }
 
-        .row { padding: 5px 0; }
+        .row { padding: 6px 0; }
 
         .name { color: ${palette.text}; font-family: "Inter"; font-size: 13px; font-weight: 600; }
-        .pct  { color: ${palette.text}; font-family: "Inter"; font-size: 13px; font-weight: 700; }
-        .caption, .reset { color: ${palette.muted}; font-family: "Inter"; font-size: 11px; }
+        .err  { color: ${palette.warning}; font-family: "Inter"; font-size: 11px; }
+        .barrow { padding: 1px 0; }
+        .wlabel { color: ${palette.muted}; font-family: "Inter"; font-size: 11px; font-weight: 600; min-width: 22px; }
+        .wpct   { color: ${palette.text}; font-family: "Inter"; font-size: 11px; font-weight: 700; min-width: 34px; }
+        .reset  { color: ${palette.muted}; font-family: "Inter"; font-size: 10px; min-width: 30px; }
 
         .bar trough {
           background-color: ${palette.surfaceStrong};
-          border-radius: 6px;
-          min-height: 8px;
-          min-width: 140px;
+          border-radius: 5px;
+          min-height: 7px;
+          min-width: 120px;
         }
-        .bar progress { border-radius: 6px; min-height: 8px; }
+        .bar progress { border-radius: 5px; min-height: 7px; }
         .bar-ok progress    { background-color: ${palette.pink}; }
         .bar-warn progress  { background-color: ${palette.warning}; }
         .bar-alert progress { background-color: ${palette.danger}; }
@@ -302,6 +336,12 @@ in
         skipDangerousModePermissionPrompt = true;
         permissions.defaultMode = "bypassPermissions";
       };
+
+      # ashell (cosmic-text/fontdb) only reliably discovers fonts from a few
+      # standard dirs; linking the Nerd Font symbols here guarantees the gauge
+      # glyph on the agent-usage chip resolves via fallback.
+      home.file.".local/share/fonts/SymbolsNerdFont-Regular.ttf".source =
+        "${pkgs.nerd-fonts.symbols-only}/share/fonts/truetype/NerdFonts/Symbols/SymbolsNerdFont-Regular.ttf";
 
       home.file.".codex/config.toml".text = ''
         approval_policy = "never"
@@ -408,6 +448,44 @@ in
         bind = ALT SHIFT, 8, movetoworkspace, 8
         bind = ALT SHIFT, 9, movetoworkspace, 9
         bind = ALT SHIFT, 0, movetoworkspace, 10
+      '';
+
+      # qmenu launcher theme — matches the desktop pink-on-near-black palette
+      # (same base/accent as walker & fuzzel). Edit here, then rebuild.
+      xdg.configFile."qmenu/config.toml".text = ''
+        [colors]
+        background           = "#f2050507"
+        foreground           = "#f7eef5"
+        prompt               = "#ff4fa3"
+        selection_background = "#ff4fa3"
+        selection_foreground = "#050507"
+        muted                = "#cdbfca"
+        border               = "#ff4fa3"
+
+        [layout]
+        width_fraction    = 0.42
+        min_width         = 520
+        margin_top        = 8
+        max_visible_items = 12
+        font_size         = 14.0
+        line_height       = 32.0
+        pad_x             = 16.0
+        pad_y             = 12.0
+        corner_radius     = 14.0
+        border_width      = 2.0
+        row_radius        = 8.0
+        font_family       = "Inter"
+
+        [icons]
+        enabled = true
+        size    = 22
+        gap     = 12.0
+        theme   = "Adwaita"
+
+        [behavior]
+        show_all_when_empty = false
+        placeholder         = "Search…"
+        terminal            = "ghostty"
       '';
 
       xdg.configFile."fuzzel/fuzzel.ini".text = ''

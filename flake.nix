@@ -18,6 +18,13 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Rolling: AI coding-agent usage limits for the ashell bar. Bumped via
+    # `nix flake update agent-usage`.
+    agent-usage = {
+      url = "github:QuillDev/agent-usage";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";

@@ -1,5 +1,25 @@
 {
   "nodes": {
+    "agent-usage": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1781409749,
+        "narHash": "sha256-L/+C72sptgYPOItnCsx/ATrfNzGFehPTvwfWgH5NxCE=",
+        "owner": "QuillDev",
+        "repo": "agent-usage",
+        "rev": "f6dd1164c0f662be9d69a1f024cdc214798e48ef",
+        "type": "github"
+      },
+      "original": {
+        "owner": "QuillDev",
+        "repo": "agent-usage",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -81,11 +101,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781408000,
-        "narHash": "sha256-QrSyoEk4bqj4DebAeEp9DOLFGsxAnoY7R3c/XY7tnTI=",
+        "lastModified": 1781409709,
+        "narHash": "sha256-7MzAJu/z8oVxjE/jjW42u7DRe06GJJlzg2tjAgHEuko=",
         "owner": "QuillDev",
         "repo": "qmenu",
-        "rev": "08c41c64d659735f283168094f0daabb6b420c99",
+        "rev": "1d9c9b8412e9f08859720dc178e7ac220fa3ee8a",
         "type": "github"
       },
       "original": {
@@ -96,6 +116,7 @@
     },
     "root": {
       "inputs": {
+        "agent-usage": "agent-usage",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
