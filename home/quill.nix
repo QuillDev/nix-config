@@ -171,6 +171,7 @@ in
 
         monitor = , preferred, auto, 1
 
+        exec-once = hyprpaper
         exec-once = ashell
         exec-once = mako
 
@@ -275,6 +276,15 @@ in
         width=2
         radius=14
         selection-radius=8
+      '';
+
+      xdg.configFile."hypr/hyprpaper.conf".text = ''
+        wallpaper {
+            monitor = eDP-1
+            path = ${../assets/wallpapers/chatgpt-wallpaper.png}
+            fit_mode = cover
+        }
+        splash = false
       '';
 
       xdg.configFile."mako/config".text = ''
