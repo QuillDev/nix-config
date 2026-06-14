@@ -170,7 +170,10 @@ in
             follow_mouse = 1
             scroll_factor = 0.5
             touchpad {
+                tap-to-click = true
+                clickfinger_behavior = true
                 natural_scroll = false
+                middle_button_emulation = false
             }
         }
 
