@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781409749,
-        "narHash": "sha256-L/+C72sptgYPOItnCsx/ATrfNzGFehPTvwfWgH5NxCE=",
+        "lastModified": 1781410905,
+        "narHash": "sha256-Fpp2MuatJy/CSdhbRmuYhDdccyWNFddz/4T3gmdJv5Y=",
         "owner": "QuillDev",
         "repo": "agent-usage",
-        "rev": "f6dd1164c0f662be9d69a1f024cdc214798e48ef",
+        "rev": "7d9cdfafaff0702a33905423d339b6fb5ab02159",
         "type": "github"
       },
       "original": {
@@ -101,11 +101,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781409709,
-        "narHash": "sha256-7MzAJu/z8oVxjE/jjW42u7DRe06GJJlzg2tjAgHEuko=",
+        "lastModified": 1781410965,
+        "narHash": "sha256-NO8MPrg9ym8BpzIWJ2cV7Fj4ZZGuizGMYp90X23rZI8=",
         "owner": "QuillDev",
         "repo": "qmenu",
-        "rev": "1d9c9b8412e9f08859720dc178e7ac220fa3ee8a",
+        "rev": "5bbfe1153d364fb5c6b30b83910728e15cd630c4",
         "type": "github"
       },
       "original": {

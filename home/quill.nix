@@ -172,7 +172,7 @@ in
         opacity = 0.98
         backdrop = 0.2
 
-        # AI coding-agent usage limits (Claude Code / Codex / Kimi). An icon-only
+        # AI coding-agent usage limits (Claude Code / Codex / Kimi / Cursor). An icon-only
         # chip; listen_cmd streams Waybar-format JSON whose `alt` lights the alert
         # dot at >=80% or on error. Clicking toggles the eww popup with per-provider
         # logos and % bars. Icon is a Nerd Font gauge (U+F0E4) via symbols-only
@@ -182,7 +182,7 @@ in
         name = "AgentUsage"
         type = "Button"
         icon = "${builtins.fromJSON ''""''}"
-        listen_cmd = "${agent-usage}/bin/agent-usage --watch --interval 60"
+        listen_cmd = "${agent-usage}/bin/agent-usage --watch --interval 60 --providers cc,cx,km,cu"
         command = "${agent-usage-popup}/bin/agent-usage-popup"
         alert = "\"alt\":\"alert\""
 
@@ -204,8 +204,8 @@ in
         (defpoll usage
           :interval "30s"
           :run-while usage_open
-          :initial "{\"cc\":{\"name\":\"Claude Code\",\"present\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"cx\":{\"name\":\"Codex\",\"present\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"km\":{\"name\":\"Kimi\",\"present\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}}}"
-          "${agent-usage}/bin/agent-usage --eww")
+          :initial "{\"cc\":{\"name\":\"Claude Code\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"cx\":{\"name\":\"Codex\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"km\":{\"name\":\"Kimi\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"cu\":{\"name\":\"Cursor\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":false},\"w2\":{\"label\":\"mo\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}}}"
+          "${agent-usage}/bin/agent-usage --eww --providers cc,cx,km,cu")
 
         ; one window's bar: short label, coloured progress, percent, reset ETA
         (defwidget barrow [label pct state reset visible]
@@ -232,17 +232,21 @@ in
           (box :class "popup" :orientation "v" :space-evenly false :vexpand false :valign "start" :spacing 14
             (label :class "title" :halign "start" :text "AGENT USAGE")
             (prow :logo "${agent-usage}/share/agent-usage/icons/claude.svg"
-                  :name {usage.cc.name} :error {usage.cc.error} :visible {usage.cc.present}
+                  :name {usage.cc.name} :error {usage.cc.error} :visible {usage.cc.shown && usage.cc.present}
                   :w1l {usage.cc.w1.label} :w1p {usage.cc.w1.pct} :w1s {usage.cc.w1.state} :w1r {usage.cc.w1.reset} :w1v {usage.cc.w1.present}
                   :w2l {usage.cc.w2.label} :w2p {usage.cc.w2.pct} :w2s {usage.cc.w2.state} :w2r {usage.cc.w2.reset} :w2v {usage.cc.w2.present})
             (prow :logo "${agent-usage}/share/agent-usage/icons/codex.svg"
-                  :name {usage.cx.name} :error {usage.cx.error} :visible {usage.cx.present}
+                  :name {usage.cx.name} :error {usage.cx.error} :visible {usage.cx.shown && usage.cx.present}
                   :w1l {usage.cx.w1.label} :w1p {usage.cx.w1.pct} :w1s {usage.cx.w1.state} :w1r {usage.cx.w1.reset} :w1v {usage.cx.w1.present}
                   :w2l {usage.cx.w2.label} :w2p {usage.cx.w2.pct} :w2s {usage.cx.w2.state} :w2r {usage.cx.w2.reset} :w2v {usage.cx.w2.present})
             (prow :logo "${agent-usage}/share/agent-usage/icons/kimi.svg"
-                  :name {usage.km.name} :error {usage.km.error} :visible {usage.km.present}
+                  :name {usage.km.name} :error {usage.km.error} :visible {usage.km.shown && usage.km.present}
                   :w1l {usage.km.w1.label} :w1p {usage.km.w1.pct} :w1s {usage.km.w1.state} :w1r {usage.km.w1.reset} :w1v {usage.km.w1.present}
-                  :w2l {usage.km.w2.label} :w2p {usage.km.w2.pct} :w2s {usage.km.w2.state} :w2r {usage.km.w2.reset} :w2v {usage.km.w2.present})))
+                  :w2l {usage.km.w2.label} :w2p {usage.km.w2.pct} :w2s {usage.km.w2.state} :w2r {usage.km.w2.reset} :w2v {usage.km.w2.present})
+            (prow :logo "${agent-usage}/share/agent-usage/icons/cursor.svg"
+                  :name {usage.cu.name} :error {usage.cu.error} :visible {usage.cu.shown && usage.cu.present}
+                  :w1l {usage.cu.w1.label} :w1p {usage.cu.w1.pct} :w1s {usage.cu.w1.state} :w1r {usage.cu.w1.reset} :w1v {usage.cu.w1.present}
+                  :w2l {usage.cu.w2.label} :w2p {usage.cu.w2.pct} :w2s {usage.cu.w2.state} :w2r {usage.cu.w2.reset} :w2v {usage.cu.w2.present})))
 
         ; Full-screen transparent backdrop so a click anywhere outside the popup
         ; dismisses it (like the other bar menus). The popup itself is wrapped in
@@ -463,6 +467,7 @@ in
         border               = "#ff4fa3"
 
         [layout]
+        anchor            = "center"
         width_fraction    = 0.42
         min_width         = 520
         margin_top        = 8
