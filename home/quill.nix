@@ -35,19 +35,32 @@ let
           "$eww" close usage
           "$eww" update usage_open=false
         else
-          # Centre the popup under the cursor (which is on the chip we clicked),
-          # clamped to the screen. Falls back to the right edge without Hyprland.
+          # Open on the monitor under the cursor, centred on the chip we just
+          # clicked (cursor x relative to that monitor), clamped to it. Multi-
+          # monitor aware; falls back to a single 1920px screen without Hyprland.
           # pw ~= min-width(304) + padding(36) + border(4).
           pw=344
-          mw=$(hyprctl monitors -j 2>/dev/null \
-                 | ${pkgs.jq}/bin/jq -r 'first(.[]|select(.focused))|(.width/.scale)|floor' 2>/dev/null)
-          cx=$(hyprctl cursorpos 2>/dev/null | ${pkgs.coreutils}/bin/tr -dc '0-9,' | ${pkgs.coreutils}/bin/cut -d, -f1)
-          [ -n "$mw" ] || mw=1920
-          [ -n "$cx" ] || cx=$((mw - 2))
-          x=$((cx - pw / 2))
+          pos=$(hyprctl cursorpos 2>/dev/null | ${pkgs.coreutils}/bin/tr -dc '0-9,-')
+          cx=$(printf '%s' "$pos" | ${pkgs.coreutils}/bin/cut -d, -f1)
+          cy=$(printf '%s' "$pos" | ${pkgs.coreutils}/bin/cut -d, -f2)
+          geo=$(hyprctl monitors -j 2>/dev/null | ${pkgs.jq}/bin/jq -r \
+            --argjson cx "''${cx:-0}" --argjson cy "''${cy:-0}" \
+            '(map(select($cx >= .x and $cx < (.x + .width/.scale) and $cy >= .y and $cy < (.y + .height/.scale))) | first)
+             // (map(select(.focused)) | first) // .[0]
+             | "\(.name)\t\((($cx - .x))|floor)\t\((.width/.scale)|floor)"' 2>/dev/null)
+          mon=$(printf '%s' "$geo" | ${pkgs.coreutils}/bin/cut -f1)
+          relx=$(printf '%s' "$geo" | ${pkgs.coreutils}/bin/cut -f2)
+          lw=$(printf '%s' "$geo" | ${pkgs.coreutils}/bin/cut -f3)
+          [ -n "$lw" ] || lw=1920
+          [ -n "$relx" ] || relx=$((lw - 2))
+          x=$((relx - pw / 2))
           [ "$x" -lt 6 ] && x=6
-          max=$((mw - pw - 6)); [ "$x" -gt "$max" ] && x=$max
-          "$eww" open usage --arg xpos="$x"
+          max=$((lw - pw - 6)); [ "$x" -gt "$max" ] && x=$max
+          if [ -n "$mon" ]; then
+            "$eww" open usage --screen "$mon" --arg xpos="$x"
+          else
+            "$eww" open usage --arg xpos="$x"
+          fi
           "$eww" update usage_open=true
         fi
         ;;
@@ -419,10 +432,6 @@ in
         decoration {
             rounding = 4
         }
-
-        # qmenu resizes its layer surface as results appear; without this Hyprland
-        # plays a stretch animation on each resize, making the prompt jump around.
-        layerrule = noanim, qmenu
 
         bind = ALT, Return, exec, $terminal
         bind = ALT, T, exec, $terminal
