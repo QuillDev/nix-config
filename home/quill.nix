@@ -175,6 +175,54 @@ in
         radius=6
       '';
 
+      xdg.configFile."mako/config".text = ''
+        font=Inter 11
+        width=420
+        height=140
+        anchor=top-right
+        layer=overlay
+        outer-margin=12,14,0,0
+        margin=8
+        padding=12,14
+        border-size=2
+        border-radius=8
+        icons=1
+        max-icon-size=48
+        icon-location=left
+        icon-border-radius=6
+        markup=1
+        actions=1
+        history=1
+        max-history=20
+        max-visible=4
+        sort=-time
+        default-timeout=6500
+        ignore-timeout=1
+        group-by=app-name,summary
+        format=<b>%s</b>\n<span foreground="#c9d1d9">%b</span>
+
+        background-color=#1f2328f2
+        text-color=#f0f6fcff
+        border-color=#7dd3fcff
+        progress-color=over #7dd3fcff
+
+        [urgency=low]
+        background-color=#20242af0
+        text-color=#c9d1d9ff
+        border-color=#4b5563ff
+        default-timeout=4500
+
+        [urgency=critical]
+        background-color=#2a171cff
+        text-color=#fff7edff
+        border-color=#f97316ff
+        progress-color=over #f97316ff
+        default-timeout=0
+
+        [grouped]
+        format=(%g) <b>%s</b>\n<span foreground="#c9d1d9">%b</span>
+      '';
+
       xdg.configFile."gtk-3.0/settings.ini".text = ''
         [Settings]
         gtk-theme-name=Adwaita-dark

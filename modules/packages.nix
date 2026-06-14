@@ -29,6 +29,7 @@ in
     slack
     ashell
     mako
+    libnotify
     wl-clipboard
     grim
     slurp
