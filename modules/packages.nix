@@ -1,6 +1,12 @@
 { pkgs, inputs, ... }:
 
 let
+  # Latest fast-moving AI coding CLIs, sourced from nixos-unstable while the
+  # rest of the system stays on the pinned stable channel.
+  pkgs-unstable = import inputs.nixpkgs-unstable {
+    inherit (pkgs.stdenv.hostPlatform) system;
+    config.allowUnfree = true;
+  };
   kimi-code = pkgs.callPackage ../pkgs/kimi-code { };
 in
 
@@ -22,10 +28,12 @@ in
     adwaita-qt
     gnome-themes-extra
     ghostty
-    codex
-    claude-code
+    pkgs-unstable.codex
+    pkgs-unstable.claude-code
     kimi-code
     fuzzel
+    walker
+    elephant
     slack
     ashell
     mako

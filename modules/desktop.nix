@@ -33,6 +33,9 @@
 
   fonts.packages = with pkgs; [
     inter
+    # Glyph fallback so the ashell agent-usage chip can render a Nerd Font icon
+    # (Inter has no such glyph; fontconfig falls back to this).
+    nerd-fonts.symbols-only
   ];
 
   environment.sessionVariables = {

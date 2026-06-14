@@ -1,11 +1,11 @@
 {
   "name": "kimi-code-nix",
-  "version": "0.14.2",
+  "version": "0.14.3",
   "private": true,
   "bin": {
     "kimi": "./node_modules/@moonshot-ai/kimi-code/dist/main.mjs"
   },
   "dependencies": {
-    "@moonshot-ai/kimi-code": "0.14.2"
+    "@moonshot-ai/kimi-code": "0.14.3"
   }
 }
