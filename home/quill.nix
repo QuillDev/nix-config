@@ -237,6 +237,7 @@ in
         font=Inter:size=13
         prompt="> "
         terminal=ghostty
+        hide-before-typing=yes
         width=42
         lines=10
         horizontal-pad=18
