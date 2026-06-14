@@ -22,6 +22,20 @@ in
     gh
     ripgrep
     bun
+
+    # Rust toolchain — qmenu and other local crates are built here regularly.
+    # pkg-config + the native libs let `cargo build` find wayland/xkb/fontconfig
+    # outside the qmenu dev shell.
+    rustc
+    cargo
+    rustfmt
+    clippy
+    rust-analyzer
+    pkg-config
+    wayland
+    libxkbcommon
+    fontconfig
+    freetype
     code-cursor-fhs
     discord
     adwaita-icon-theme

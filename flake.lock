@@ -101,11 +101,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781410965,
-        "narHash": "sha256-NO8MPrg9ym8BpzIWJ2cV7Fj4ZZGuizGMYp90X23rZI8=",
+        "lastModified": 1781414815,
+        "narHash": "sha256-giCS0GthWw1EhqMfLz2w2XXRoEDP2y+nElckyyQr6O0=",
         "owner": "QuillDev",
         "repo": "qmenu",
-        "rev": "5bbfe1153d364fb5c6b30b83910728e15cd630c4",
+        "rev": "811fcedf0ecf3a9c509923c283d8dccf1ed30ae1",
         "type": "github"
       },
       "original": {
