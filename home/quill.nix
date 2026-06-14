@@ -1,6 +1,21 @@
 { pkgs, ... }:
 
 let
+  palette = {
+    black = "#050507";
+    surface = "#0b0b10";
+    surfaceWeak = "#15121a";
+    surfaceStrong = "#241827";
+    text = "#f7eef5";
+    muted = "#cdbfca";
+    pink = "#ff4fa3";
+    pinkStrong = "#ff79bd";
+    pinkWeak = "#b83275";
+    danger = "#ff5c8a";
+    warning = "#f5a524";
+    success = "#66e3a1";
+  };
+
   kimi-code = pkgs.callPackage ../pkgs/kimi-code { };
   kimi-yolo = pkgs.writeShellScriptBin "kimi" ''
     for arg in "$@"; do
@@ -44,6 +59,76 @@ in
       xdg.enable = true;
 
       programs.bash.enable = true;
+
+      xdg.configFile."ashell/config.toml".text = ''
+        log_level = "warn"
+        position = "Top"
+        layer = "Top"
+
+        [appearance]
+        style = "Islands"
+        font_name = "Inter"
+        opacity = 0.96
+        text_color = "${palette.text}"
+        workspace_colors = [ "${palette.pink}", "${palette.pinkStrong}" ]
+        special_workspace_colors = [ "${palette.pinkStrong}", "${palette.pink}" ]
+        success_color = "${palette.success}"
+
+        [appearance.primary_color]
+        base = "${palette.pink}"
+        strong = "${palette.pinkStrong}"
+        weak = "${palette.pinkWeak}"
+        text = "${palette.black}"
+
+        [appearance.secondary_color]
+        base = "${palette.pink}"
+        strong = "${palette.pinkStrong}"
+        weak = "${palette.pinkWeak}"
+        text = "${palette.black}"
+
+        [appearance.background_color]
+        base = "${palette.surface}"
+        weak = "${palette.surfaceWeak}"
+        strong = "${palette.surfaceStrong}"
+
+        [appearance.danger_color]
+        base = "${palette.danger}"
+        weak = "${palette.warning}"
+
+        [appearance.menu]
+        opacity = 0.98
+        backdrop = 0.2
+      '';
+
+      xdg.configFile."ghostty/config.ghostty".text = ''
+        theme =
+        window-theme = dark
+
+        background = ${palette.black}
+        foreground = ${palette.text}
+        selection-background = ${palette.pink}
+        selection-foreground = ${palette.black}
+        cursor-color = ${palette.pink}
+        cursor-text = ${palette.black}
+        unfocused-split-fill = ${palette.black}
+
+        palette = 0=${palette.black}
+        palette = 1=${palette.danger}
+        palette = 2=${palette.success}
+        palette = 3=${palette.warning}
+        palette = 4=#8aadf4
+        palette = 5=${palette.pink}
+        palette = 6=#8bd5ca
+        palette = 7=${palette.muted}
+        palette = 8=#5b5360
+        palette = 9=#ff7aa8
+        palette = 10=#8ff0b3
+        palette = 11=#ffd166
+        palette = 12=#a6c8ff
+        palette = 13=${palette.pinkStrong}
+        palette = 14=#9bf6e5
+        palette = 15=${palette.text}
+      '';
 
       home.file.".claude/settings.json".text = builtins.toJSON {
         permissions.defaultMode = "bypassPermissions";
@@ -161,16 +246,16 @@ in
         layer=overlay
 
         [colors]
-        background=1f2328f2
-        text=e6edf3ff
-        prompt=7dd3fcff
-        placeholder=8b949eff
-        input=e6edf3ff
-        match=f9e2afff
-        selection=2f363dff
-        selection-text=ffffffff
-        selection-match=f9e2afff
-        border=7dd3fcff
+        background=050507f2
+        text=f7eef5ff
+        prompt=ff4fa3ff
+        placeholder=cdbfcaff
+        input=f7eef5ff
+        match=ff79bdff
+        selection=ff4fa3ff
+        selection-text=050507ff
+        selection-match=050507ff
+        border=ff4fa3ff
 
         [border]
         width=2
@@ -201,28 +286,28 @@ in
         default-timeout=6500
         ignore-timeout=1
         group-by=app-name,summary
-        format=<b>%s</b>\n<span foreground="#c9d1d9">%b</span>
+        format=<b>%s</b>\n<span foreground="#cdbfca">%b</span>
 
-        background-color=#1f2328f2
-        text-color=#f0f6fcff
-        border-color=#7dd3fcff
-        progress-color=over #7dd3fcff
+        background-color=#0b0b10f2
+        text-color=#f7eef5ff
+        border-color=#ff4fa3ff
+        progress-color=over #ff4fa3ff
 
         [urgency=low]
-        background-color=#20242af0
-        text-color=#c9d1d9ff
-        border-color=#4b5563ff
+        background-color=#15121af0
+        text-color=#cdbfcaff
+        border-color=#5b5360ff
         default-timeout=4500
 
         [urgency=critical]
-        background-color=#2a171cff
-        text-color=#fff7edff
-        border-color=#f97316ff
-        progress-color=over #f97316ff
+        background-color=#241827ff
+        text-color=#f7eef5ff
+        border-color=#ff5c8aff
+        progress-color=over #ff5c8aff
         default-timeout=0
 
         [grouped]
-        format=(%g) <b>%s</b>\n<span foreground="#c9d1d9">%b</span>
+        format=(%g) <b>%s</b>\n<span foreground="#cdbfca">%b</span>
       '';
 
       xdg.configFile."gtk-3.0/settings.ini".text = ''

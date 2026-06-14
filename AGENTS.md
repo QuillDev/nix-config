@@ -49,6 +49,24 @@ changes as declarative infrastructure changes by default.
   do not treat it as a required fallback policy.
 - Prefer small, reviewable Nix changes over ad hoc local state.
 
+## Visual Style
+
+- Prefer dark, close-to-black backgrounds for configurable UI surfaces.
+- Use pink as the primary accent color. When a secondary/inverted treatment is
+  needed, prefer a pink background with black foreground text or icons.
+- Current palette:
+  - `#050507` black/base background
+  - `#0b0b10` surface background
+  - `#15121a` weak/elevated surface
+  - `#241827` strong/elevated surface
+  - `#f7eef5` primary text
+  - `#cdbfca` muted text
+  - `#ff4fa3` primary pink accent
+  - `#ff79bd` strong pink accent
+  - `#b83275` weak pink accent
+- Apply this palette declaratively through Nix/Home Manager whenever the app
+  supports configuration.
+
 ## Secrets
 
 - Never commit or declaratively store personal secrets, API keys, OAuth tokens,
