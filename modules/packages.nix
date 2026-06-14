@@ -30,6 +30,7 @@ in
     ashell
     mako
     libnotify
+    brightnessctl
     wl-clipboard
     grim
     slurp
