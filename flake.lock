@@ -7,11 +7,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1781410905,
-        "narHash": "sha256-Fpp2MuatJy/CSdhbRmuYhDdccyWNFddz/4T3gmdJv5Y=",
+        "lastModified": 1781412472,
+        "narHash": "sha256-Mzd3ATgAAbfQ0ZLqy9maLi05c0lzmsOQKF+P/d63BqU=",
         "owner": "QuillDev",
         "repo": "agent-usage",
-        "rev": "7d9cdfafaff0702a33905423d339b6fb5ab02159",
+        "rev": "403d4d2555cdb07550a06d8b95715a2742fd5f34",
         "type": "github"
       },
       "original": {
