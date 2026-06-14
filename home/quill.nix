@@ -1,5 +1,20 @@
 { pkgs, ... }:
 
+let
+  kimi-code = pkgs.callPackage ../pkgs/kimi-code { };
+  kimi-yolo = pkgs.writeShellScriptBin "kimi" ''
+    for arg in "$@"; do
+      case "$arg" in
+        -p|--prompt|--prompt=*|--auto|--plan|-h|--help|-V|--version|upgrade|acp)
+          exec ${kimi-code}/bin/kimi "$@"
+          ;;
+      esac
+    done
+
+    exec ${kimi-code}/bin/kimi --yolo "$@"
+  '';
+in
+
 {
   users.users."quill" = {
     isNormalUser = true;
@@ -20,10 +35,30 @@
         username = "quill";
         homeDirectory = "/home/quill";
         stateVersion = "26.05";
+        packages = [
+          kimi-yolo
+        ];
       };
 
       programs.home-manager.enable = true;
       xdg.enable = true;
+
+      programs.bash.enable = true;
+
+      home.file.".claude/settings.json".text = builtins.toJSON {
+        permissions.defaultMode = "bypassPermissions";
+      };
+
+      home.file.".codex/config.toml".text = ''
+        approval_policy = "never"
+        sandbox_mode = "danger-full-access"
+
+        [projects."/home/quill"]
+        trust_level = "trusted"
+
+        [tui.model_availability_nux]
+        "gpt-5.5" = 4
+      '';
 
       dconf.settings = {
         "org/gnome/desktop/interface" = {

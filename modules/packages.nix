@@ -1,5 +1,9 @@
 { pkgs, inputs, ... }:
 
+let
+  kimi-code = pkgs.callPackage ../pkgs/kimi-code { };
+in
+
 {
   nixpkgs.config.allowUnfree = true;
 
@@ -19,6 +23,8 @@
     gnome-themes-extra
     ghostty
     codex
+    claude-code
+    kimi-code
     fuzzel
     slack
     waybar
