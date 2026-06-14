@@ -77,7 +77,7 @@ in
 
         monitor = , preferred, auto, 1
 
-        exec-once = waybar
+        exec-once = ashell
         exec-once = mako
 
         input {

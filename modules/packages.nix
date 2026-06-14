@@ -27,7 +27,7 @@ in
     kimi-code
     fuzzel
     slack
-    waybar
+    ashell
     mako
     wl-clipboard
     grim
