@@ -260,7 +260,8 @@ in
 
         [border]
         width=2
-        radius=6
+        radius=14
+        selection-radius=8
       '';
 
       xdg.configFile."mako/config".text = ''
