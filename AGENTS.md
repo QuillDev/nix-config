@@ -48,3 +48,14 @@ changes as declarative infrastructure changes by default.
   asks for a session or desktop change. Plasma may be present in the config, but
   do not treat it as a required fallback policy.
 - Prefer small, reviewable Nix changes over ad hoc local state.
+
+## Secrets
+
+- Never commit or declaratively store personal secrets, API keys, OAuth tokens,
+  private keys, passwords, recovery codes, or other credentials in this
+  repository.
+- If a tool needs credentials, keep the secret material in an external secret
+  store or user-managed local state, and only commit non-secret references,
+  package installs, or documented setup steps.
+- Before publishing or pushing changes that touch authentication, provider, or
+  agent configuration, check the diff for accidental secrets.
