@@ -182,7 +182,7 @@ in
         name = "AgentUsage"
         type = "Button"
         icon = "${builtins.fromJSON ''""''}"
-        listen_cmd = "${agent-usage}/bin/agent-usage --watch --interval 60 --providers cc,cx,km,cu"
+        listen_cmd = "${agent-usage}/bin/agent-usage --watch --interval 60 --providers cc,cx,km,cu --remaining"
         command = "${agent-usage-popup}/bin/agent-usage-popup"
         alert = "\"alt\":\"alert\""
 
@@ -205,7 +205,7 @@ in
           :interval "30s"
           :run-while usage_open
           :initial "{\"cc\":{\"name\":\"Claude Code\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"cx\":{\"name\":\"Codex\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"km\":{\"name\":\"Kimi\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"cu\":{\"name\":\"Cursor\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"auto\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"api\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}}}"
-          "${agent-usage}/bin/agent-usage --eww --providers cc,cx,km,cu")
+          "${agent-usage}/bin/agent-usage --eww --providers cc,cx,km,cu --remaining")
 
         ; one window's bar: short label, coloured progress, percent, reset ETA
         (defwidget barrow [label pct state reset visible]
@@ -230,7 +230,7 @@ in
 
         (defwidget usage-content []
           (box :class "popup" :orientation "v" :space-evenly false :vexpand false :valign "start" :spacing 14
-            (label :class "title" :halign "start" :text "AGENT USAGE")
+            (label :class "title" :halign "start" :text "USAGE REMAINING")
             (prow :logo "${agent-usage}/share/agent-usage/icons/claude.svg"
                   :name {usage.cc.name} :error {usage.cc.error} :visible {usage.cc.shown && usage.cc.present}
                   :w1l {usage.cc.w1.label} :w1p {usage.cc.w1.pct} :w1s {usage.cc.w1.state} :w1r {usage.cc.w1.reset} :w1v {usage.cc.w1.present}
