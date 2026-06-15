@@ -35,6 +35,8 @@ in
     python3
     gnumake
     gcc
+    nodejs
+    pulumi
     wayland
     libxkbcommon
     fontconfig
