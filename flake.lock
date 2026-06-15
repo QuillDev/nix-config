@@ -121,7 +121,28 @@
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "qmenu": "qmenu",
+        "wt": "wt",
         "zen-browser": "zen-browser"
+      }
+    },
+    "wt": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1781503989,
+        "narHash": "sha256-h+BykVnXk/KTsJyWfHClfZV681wJZxsamNMtuJ+4Bt8=",
+        "owner": "QuillDev",
+        "repo": "wt",
+        "rev": "a293d53d3f52d242fd18777403ff7009500f3bf9",
+        "type": "github"
+      },
+      "original": {
+        "owner": "QuillDev",
+        "repo": "wt",
+        "type": "github"
       }
     },
     "zen-browser": {

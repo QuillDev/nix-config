@@ -4,6 +4,7 @@
   imports = [
     ./hardware-configuration.nix
     ./modules/desktop.nix
+    ./modules/docker.nix
     ./modules/packages.nix
     ./home/quill.nix
   ];

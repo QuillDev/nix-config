@@ -149,6 +149,7 @@ in
           qmenu-launch
           agent-usage
           agent-usage-popup
+          inputs.wt.packages.${pkgs.stdenv.hostPlatform.system}.default
           pkgs.eww
         ];
       };
@@ -183,6 +184,9 @@ in
         interactiveShellInit = ''
           # Quieter startup: drop the default fish greeting.
           set -g fish_greeting
+
+          # Load wt as a fish function so `wt goto` can cd in this shell.
+          ${inputs.wt.packages.${pkgs.stdenv.hostPlatform.system}.default}/bin/wt shell-init --shell fish | source
         '';
       };
 

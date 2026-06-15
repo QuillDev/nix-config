@@ -18,6 +18,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Git worktree helper CLI.
+    wt = {
+      url = "github:QuillDev/wt";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Rolling: AI coding-agent usage limits for the ashell bar. Bumped via
     # `nix flake update agent-usage`.
     agent-usage = {
