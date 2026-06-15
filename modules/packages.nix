@@ -45,9 +45,7 @@ in
     pkgs-unstable.codex
     pkgs-unstable.claude-code
     kimi-code
-    fuzzel
-    walker
-    elephant
+    jetbrains.datagrip
     slack
     ashell
     mako
