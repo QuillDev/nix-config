@@ -157,6 +157,19 @@ in
       programs.home-manager.enable = true;
       xdg.enable = true;
 
+      systemd.user.services.hyprpaper = {
+        Unit = {
+          Description = "Hyprland wallpaper daemon";
+          PartOf = [ "default.target" ];
+        };
+
+        Service = {
+          ExecStart = "${pkgs.hyprpaper}/bin/hyprpaper";
+          Restart = "on-failure";
+          RestartSec = 1;
+        };
+      };
+
       # Fish is the interactive shell. Bash stays enabled so that
       # `#!/usr/bin/env bash` scripts and `bash -lc` always have a sane
       # environment; its aliases only apply if you drop into bash manually.
@@ -468,7 +481,7 @@ in
 
         monitor = , preferred, auto, 1
 
-        exec-once = hyprpaper
+        exec-once = ${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP DISPLAY && ${pkgs.systemd}/bin/systemctl --user restart hyprpaper.service
         exec-once = ashell
         exec-once = mako
         exec-once = eww daemon
@@ -587,7 +600,7 @@ in
 
       xdg.configFile."hypr/hyprpaper.conf".text = ''
         wallpaper {
-            monitor = eDP-1
+            monitor = *
             path = ${../assets/wallpapers/thumb-1920-827218.png}
             fit_mode = cover
         }
