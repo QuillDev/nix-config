@@ -8,6 +8,7 @@ let
     config.allowUnfree = true;
   };
   kimi-code = pkgs.callPackage ../pkgs/kimi-code { };
+  pulumi-bin = pkgs.callPackage ../pkgs/pulumi-bin { };
 in
 
 {
@@ -36,7 +37,7 @@ in
     gnumake
     gcc
     nodejs
-    pulumi
+    pulumi-bin
     wayland
     libxkbcommon
     fontconfig
