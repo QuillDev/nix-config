@@ -32,6 +32,9 @@ in
     clippy
     rust-analyzer
     pkg-config
+    python3
+    gnumake
+    gcc
     wayland
     libxkbcommon
     fontconfig
