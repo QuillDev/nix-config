@@ -16,6 +16,18 @@
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
 
+  security.sudo.extraRules = [
+    {
+      users = [ "quill" ];
+      commands = [
+        {
+          command = "ALL";
+          options = [ "NOPASSWD" ];
+        }
+      ];
+    }
+  ];
+
   # Let an explicit inhibitor block lid-close suspend. Without this, logind's
   # default lid handling ignores high-level sleep inhibitors.
   services.logind.settings.Login.LidSwitchIgnoreInhibited = false;
