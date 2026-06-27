@@ -1,5 +1,9 @@
 { pkgs, ... }:
 
+let
+  stardrop = pkgs.callPackage ../pkgs/stardrop { };
+in
+
 {
   programs.steam = {
     enable = true;
@@ -21,5 +25,6 @@
   environment.systemPackages = with pkgs; [
     mangohud
     protonup-qt
+    stardrop
   ];
 }
