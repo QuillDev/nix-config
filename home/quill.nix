@@ -300,7 +300,6 @@ in
           agent-usage-popup
           inputs.wt.packages.${pkgs.stdenv.hostPlatform.system}.default
           pkgs.eww
-          pkgs.kdePackages.qtstyleplugin-kvantum
           pkgs.kdePackages.qt6ct
           pkgs.libsForQt5.qt5ct
         ];
@@ -647,7 +646,6 @@ in
 
         env = GTK_THEME,Adwaita:dark
         env = QT_QPA_PLATFORMTHEME,qt6ct
-        env = QT_STYLE_OVERRIDE,kvantum
         env = XDG_CURRENT_DESKTOP,Hyprland
         env = XDG_SESSION_DESKTOP,Hyprland
 
@@ -849,7 +847,7 @@ in
         custom_palette=true
         icon_theme=Adwaita
         standard_dialogs=default
-        style=kvantum
+        style=Fusion
 
         [Fonts]
         fixed="monospace,10,-1,5,50,0,0,0,0,0"
@@ -876,7 +874,7 @@ in
         custom_palette=true
         icon_theme=Adwaita
         standard_dialogs=default
-        style=kvantum
+        style=Fusion
 
         [Fonts]
         fixed="monospace,10,-1,5,50,0,0,0,0,0"
@@ -900,10 +898,14 @@ in
       xdg.configFile."kdeglobals".text = kdeDarkGlobals;
       xdg.configFile."kdedefaults/kdeglobals".text = kdeDarkGlobals;
       xdg.configFile."Trolltech.conf".text = qtDarkPalette;
-      xdg.configFile."Kvantum/kvantum.kvconfig".text = ''
-        [General]
-        theme=KvArcDark
-      '';
+
+      xdg.mimeApps = {
+        enable = true;
+        defaultApplications = {
+          "inode/directory" = [ "thunar.desktop" ];
+          "application/x-gnome-saved-search" = [ "thunar.desktop" ];
+        };
+      };
     };
   };
 }

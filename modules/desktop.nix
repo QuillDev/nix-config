@@ -31,6 +31,9 @@
 
   programs.dconf.enable = true;
 
+  services.gvfs.enable = true;
+  services.tumbler.enable = true;
+
   xdg.portal = {
     enable = true;
     xdgOpenUsePortal = true;
@@ -55,7 +58,6 @@
     NIXOS_OZONE_WL = "1";
     GTK_THEME = "Adwaita:dark";
     QT_QPA_PLATFORMTHEME = "qt6ct";
-    QT_STYLE_OVERRIDE = "kvantum";
     XDG_CURRENT_DESKTOP = "Hyprland";
     XDG_SESSION_DESKTOP = "Hyprland";
   };

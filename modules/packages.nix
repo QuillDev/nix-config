@@ -48,8 +48,14 @@ in
     adwaita-qt
     gnome-themes-extra
     kdePackages.qt6ct
-    kdePackages.qtstyleplugin-kvantum
     libsForQt5.qt5ct
+    thunar
+    thunar-archive-plugin
+    thunar-volman
+    tumbler
+    ffmpegthumbnailer
+    file-roller
+    gvfs
     ghostty
     pkgs-unstable.codex
     pkgs-unstable.claude-code
