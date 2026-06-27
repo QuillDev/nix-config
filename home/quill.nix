@@ -662,12 +662,13 @@ in
         input {
             kb_layout = us
             follow_mouse = 1
-            scroll_factor = 0.5
+            scroll_factor = 1.0
             touchpad {
                 tap-to-click = true
                 clickfinger_behavior = true
                 natural_scroll = false
                 middle_button_emulation = false
+                scroll_factor = 0.5
             }
         }
 
