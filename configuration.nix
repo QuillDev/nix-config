@@ -5,6 +5,7 @@
     ./hardware-configuration.nix
     ./modules/desktop.nix
     ./modules/docker.nix
+    ./modules/gaming.nix
     ./modules/packages.nix
     ./home/quill.nix
   ];
@@ -14,6 +15,10 @@
 
   networking.hostName = "nixos";
   networking.networkmanager.enable = true;
+
+  # Let an explicit inhibitor block lid-close suspend. Without this, logind's
+  # default lid handling ignores high-level sleep inhibitors.
+  services.logind.settings.Login.LidSwitchIgnoreInhibited = false;
 
   time.timeZone = "America/Los_Angeles";
 

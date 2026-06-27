@@ -87,6 +87,121 @@ let
     ${pkgs.libnotify}/bin/notify-send -u low -i camera-photo "Screenshot copied" "Selection copied to clipboard."
   '';
 
+  agent-mode-lib = ''
+    uid="$(${pkgs.coreutils}/bin/id -u)"
+    runtime_dir="''${XDG_RUNTIME_DIR:-/run/user/$uid}"
+    state_dir="$runtime_dir/agent-mode"
+    pidfile="$state_dir/inhibit.pid"
+    enabled_file="$state_dir/enabled"
+
+    mkdir -p "$state_dir"
+
+    is_active() {
+      [ -s "$pidfile" ] || return 1
+      pid="$(${pkgs.coreutils}/bin/cat "$pidfile" 2>/dev/null || true)"
+      [ -n "$pid" ] && ${pkgs.procps}/bin/ps -p "$pid" -o args= 2>/dev/null | ${pkgs.gnugrep}/bin/grep -q systemd-inhibit
+    }
+
+    lid_closed() {
+      ${pkgs.gnugrep}/bin/grep -qi closed /proc/acpi/button/lid/*/state 2>/dev/null
+    }
+
+    internal_outputs() {
+      ${pkgs.hyprland}/bin/hyprctl monitors -j 2>/dev/null \
+        | ${pkgs.jq}/bin/jq -r '.[] | select(.name | test("^(eDP|LVDS|DSI)-")) | .name' 2>/dev/null \
+        | ${pkgs.gnugrep}/bin/grep -v '^$' || true
+    }
+
+    set_internal_power() {
+      mode="$1"
+      outputs="$(internal_outputs)"
+      [ -n "$outputs" ] || outputs="eDP-1"
+
+      printf '%s\n' "$outputs" | while IFS= read -r output; do
+        [ -n "$output" ] || continue
+        case "$mode" in
+          off) ${pkgs.wlopm}/bin/wlopm --off "$output" >/dev/null 2>&1 || true ;;
+          on)  ${pkgs.wlopm}/bin/wlopm --on "$output" >/dev/null 2>&1 || true ;;
+        esac
+      done
+    }
+
+    apply_lid_state() {
+      if is_active && lid_closed; then
+        set_internal_power off
+      else
+        set_internal_power on
+      fi
+    }
+  '';
+
+  agent-mode-toggle = pkgs.writeShellScriptBin "agent-mode-toggle" ''
+    set -euo pipefail
+    ${agent-mode-lib}
+
+    if [ "''${1:-}" = "--status" ]; then
+      is_active
+      exit "$?"
+    fi
+
+    if is_active; then
+      pid="$(${pkgs.coreutils}/bin/cat "$pidfile")"
+      kill "$pid" 2>/dev/null || true
+      rm -f "$pidfile" "$enabled_file"
+      set_internal_power on
+      ${pkgs.libnotify}/bin/notify-send -u low "Agent Mode off" "Lid close will use normal suspend behavior."
+      exit 0
+    fi
+
+    ${pkgs.systemd}/bin/systemd-inhibit \
+      --what=sleep:idle:handle-lid-switch \
+      --who="Agent Mode" \
+      --why="Keep AI agents and local processes running while the laptop lid is closed" \
+      --mode=block \
+      ${pkgs.coreutils}/bin/sleep infinity &
+
+    pid="$!"
+    printf '%s\n' "$pid" > "$pidfile"
+    : > "$enabled_file"
+    apply_lid_state
+    ${pkgs.libnotify}/bin/notify-send -u low "Agent Mode on" "Sleep and lid suspend are blocked. Closing the lid will turn off the internal display."
+  '';
+
+  agent-mode-status = pkgs.writeShellScriptBin "agent-mode-status" ''
+    set -euo pipefail
+    ${agent-mode-lib}
+
+    while true; do
+      if is_active; then
+        printf '{"text":"","alt":"active","tooltip":"Agent Mode active: lid sleep blocked"}\n'
+      else
+        printf '{"text":"","alt":"inactive","tooltip":"Agent Mode off"}\n'
+      fi
+      ${pkgs.coreutils}/bin/sleep 2
+    done
+  '';
+
+  agent-mode-lid-watch = pkgs.writeShellScriptBin "agent-mode-lid-watch" ''
+    set -euo pipefail
+    ${agent-mode-lib}
+
+    last=""
+    while true; do
+      if is_active && lid_closed; then
+        current="headless"
+      else
+        current="display"
+      fi
+
+      if [ "$current" != "$last" ]; then
+        apply_lid_state
+        last="$current"
+      fi
+
+      ${pkgs.coreutils}/bin/sleep 2
+    done
+  '';
+
   # App launcher: qmenu in drun mode reads XDG .desktop entries and prints the
   # chosen app's Exec line, which we run detached. Toggles: if qmenu is already
   # open, pressing the same hotkey again closes it instead of opening a second.
@@ -146,6 +261,9 @@ in
         packages = [
           kimi-yolo
           screenshot-selection
+          agent-mode-toggle
+          agent-mode-status
+          agent-mode-lid-watch
           qmenu-launch
           agent-usage
           agent-usage-popup
@@ -276,6 +394,9 @@ in
         opacity = 0.98
         backdrop = 0.2
 
+        [tempo]
+        clock_format = "%a %d %b %-I:%M %p"
+
         # AI coding-agent usage limits (Claude Code / Codex / Kimi / Cursor). An icon-only
         # chip; listen_cmd streams Waybar-format JSON whose `alt` lights the alert
         # dot at >=80% or on error. Clicking toggles the eww popup with per-provider
@@ -289,6 +410,17 @@ in
         listen_cmd = "${agent-usage}/bin/agent-usage --watch --interval 60 --providers cc,cx,km,cu --remaining"
         command = "${agent-usage-popup}/bin/agent-usage-popup"
         alert = "\"alt\":\"alert\""
+
+        [settings]
+        remove_idle_btn = true
+        indicators = [ "PowerProfile", "Audio", "Microphone", "Bluetooth", "Network", "Vpn", "Battery", "Brightness" ]
+
+        [[settings.CustomButton]]
+        name = "Agent Mode"
+        icon = "☕"
+        command = "${agent-mode-toggle}/bin/agent-mode-toggle"
+        status_command = "${pkgs.bash}/bin/bash -lc '${agent-mode-toggle}/bin/agent-mode-toggle --status'"
+        tooltip = "Keep agents running with the lid closed"
 
         # Keep ashell's default left/center; add AgentUsage to the right island.
         [modules]
@@ -485,6 +617,7 @@ in
         exec-once = ashell
         exec-once = mako
         exec-once = eww daemon
+        exec-once = agent-mode-lid-watch
 
         input {
             kb_layout = us
