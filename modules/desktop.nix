@@ -6,6 +6,10 @@
   services.displayManager.sddm.enable = true;
   services.displayManager.defaultSession = "hyprland";
   services.desktopManager.plasma6.enable = true;
+  environment.plasma6.excludePackages = with pkgs.kdePackages; [
+    dolphin
+    dolphin-plugins
+  ];
 
   programs.hyprland = {
     enable = true;
