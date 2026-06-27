@@ -47,6 +47,9 @@ in
     adwaita-icon-theme
     adwaita-qt
     gnome-themes-extra
+    kdePackages.qt6ct
+    kdePackages.qtstyleplugin-kvantum
+    libsForQt5.qt5ct
     ghostty
     pkgs-unstable.codex
     pkgs-unstable.claude-code

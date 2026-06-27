@@ -16,6 +16,37 @@ let
     success = "#66e3a1";
   };
 
+  kdeDarkGlobals = builtins.readFile "${pkgs.kdePackages.breeze}/share/color-schemes/BreezeDark.colors" + ''
+
+    [Icons]
+    Theme=Adwaita
+
+    [KDE]
+    LookAndFeelPackage=org.kde.breezedark.desktop
+    contrast=4
+    widgetStyle=Breeze
+  '';
+
+  qtDarkPalette = ''
+    [qt]
+    GUIEffects=none
+    KDE\contrast=4
+    KWinPalette\activeBackground=#202326
+    KWinPalette\activeBlend=#fcfcfc
+    KWinPalette\activeForeground=#fcfcfc
+    KWinPalette\activeTitleBtnBg=#292c30
+    KWinPalette\frame=#292c30
+    KWinPalette\inactiveBackground=#202326
+    KWinPalette\inactiveBlend=#a1a9b1
+    KWinPalette\inactiveForeground=#a1a9b1
+    KWinPalette\inactiveFrame=#202326
+    KWinPalette\inactiveTitleBtnBg=#202326
+    Palette\active=#fcfcfc, #202326, #292c30, #292c30, #1d1f22, #141618, #fcfcfc, #ffffff, #fcfcfc, #202326, #292c30, #141618, #3daee9, #fcfcfc, #1d99f3, #9b59b6, #141618, #000000, #141618, #fcfcfc, #a1a9b1, #3daee9
+    Palette\disabled=#a1a9b1, #202326, #292c30, #292c30, #1d1f22, #141618, #a1a9b1, #ffffff, #a1a9b1, #202326, #292c30, #141618, #202326, #a1a9b1, #1d99f3, #9b59b6, #141618, #000000, #141618, #fcfcfc, #a1a9b1, #202326
+    Palette\inactive=#fcfcfc, #202326, #292c30, #292c30, #1d1f22, #141618, #fcfcfc, #ffffff, #fcfcfc, #202326, #292c30, #141618, #202326, #fcfcfc, #1d99f3, #9b59b6, #141618, #000000, #141618, #fcfcfc, #a1a9b1, #202326
+    font="Inter,10,-1,5,50,0,0,0,0,0"
+  '';
+
   kimi-code = pkgs.callPackage ../pkgs/kimi-code { };
   qmenu = inputs.qmenu.packages.${pkgs.system}.default;
   agent-usage = inputs.agent-usage.packages.${pkgs.system}.default;
@@ -269,6 +300,9 @@ in
           agent-usage-popup
           inputs.wt.packages.${pkgs.stdenv.hostPlatform.system}.default
           pkgs.eww
+          pkgs.kdePackages.qtstyleplugin-kvantum
+          pkgs.kdePackages.qt6ct
+          pkgs.libsForQt5.qt5ct
         ];
       };
 
@@ -611,6 +645,12 @@ in
 
         $terminal = ghostty
 
+        env = GTK_THEME,Adwaita:dark
+        env = QT_QPA_PLATFORMTHEME,qt6ct
+        env = QT_STYLE_OVERRIDE,kvantum
+        env = XDG_CURRENT_DESKTOP,Hyprland
+        env = XDG_SESSION_DESKTOP,Hyprland
+
         monitor = , preferred, auto, 1
 
         exec-once = ${pkgs.systemd}/bin/systemctl --user import-environment WAYLAND_DISPLAY HYPRLAND_INSTANCE_SIGNATURE XDG_CURRENT_DESKTOP DISPLAY && ${pkgs.systemd}/bin/systemctl --user restart hyprpaper.service
@@ -802,13 +842,66 @@ in
         gtk-application-prefer-dark-theme=1
       '';
 
-      xdg.configFile."kdeglobals".text = ''
-        [General]
-        ColorScheme=BreezeDark
-        Name=Breeze Dark
+      xdg.configFile."qt6ct/qt6ct.conf".text = ''
+        [Appearance]
+        color_scheme_path=${pkgs.kdePackages.qt6ct}/share/qt6ct/colors/darker.conf
+        custom_palette=true
+        icon_theme=Adwaita
+        standard_dialogs=default
+        style=kvantum
 
-        [KDE]
-        LookAndFeelPackage=org.kde.breezedark.desktop
+        [Fonts]
+        fixed="monospace,10,-1,5,50,0,0,0,0,0"
+        general="Inter,10,-1,5,50,0,0,0,0,0"
+
+        [Interface]
+        activate_item_on_single_click=1
+        buttonbox_layout=0
+        cursor_flash_time=1000
+        dialog_buttons_have_icons=1
+        double_click_interval=400
+        keyboard_scheme=2
+        menus_have_icons=true
+        show_shortcuts_in_context_menus=true
+        stylesheets=@Invalid()
+        toolbutton_style=4
+        underline_shortcut=1
+        wheel_scroll_lines=3
+      '';
+
+      xdg.configFile."qt5ct/qt5ct.conf".text = ''
+        [Appearance]
+        color_scheme_path=${pkgs.libsForQt5.qt5ct}/share/qt5ct/colors/darker.conf
+        custom_palette=true
+        icon_theme=Adwaita
+        standard_dialogs=default
+        style=kvantum
+
+        [Fonts]
+        fixed="monospace,10,-1,5,50,0,0,0,0,0"
+        general="Inter,10,-1,5,50,0,0,0,0,0"
+
+        [Interface]
+        activate_item_on_single_click=1
+        buttonbox_layout=0
+        cursor_flash_time=1000
+        dialog_buttons_have_icons=1
+        double_click_interval=400
+        keyboard_scheme=2
+        menus_have_icons=true
+        show_shortcuts_in_context_menus=true
+        stylesheets=@Invalid()
+        toolbutton_style=4
+        underline_shortcut=1
+        wheel_scroll_lines=3
+      '';
+
+      xdg.configFile."kdeglobals".text = kdeDarkGlobals;
+      xdg.configFile."kdedefaults/kdeglobals".text = kdeDarkGlobals;
+      xdg.configFile."Trolltech.conf".text = qtDarkPalette;
+      xdg.configFile."Kvantum/kvantum.kvconfig".text = ''
+        [General]
+        theme=KvArcDark
       '';
     };
   };

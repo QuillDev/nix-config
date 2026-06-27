@@ -31,6 +31,19 @@
 
   programs.dconf.enable = true;
 
+  xdg.portal = {
+    enable = true;
+    xdgOpenUsePortal = true;
+    extraPortals = with pkgs; [
+      xdg-desktop-portal-gtk
+      xdg-desktop-portal-hyprland
+    ];
+    config.common.default = [
+      "hyprland"
+      "gtk"
+    ];
+  };
+
   fonts.packages = with pkgs; [
     inter
     # Glyph fallback so the ashell agent-usage chip can render a Nerd Font icon
@@ -40,5 +53,10 @@
 
   environment.sessionVariables = {
     NIXOS_OZONE_WL = "1";
+    GTK_THEME = "Adwaita:dark";
+    QT_QPA_PLATFORMTHEME = "qt6ct";
+    QT_STYLE_OVERRIDE = "kvantum";
+    XDG_CURRENT_DESKTOP = "Hyprland";
+    XDG_SESSION_DESKTOP = "Hyprland";
   };
 }
