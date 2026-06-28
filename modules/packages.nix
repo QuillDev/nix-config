@@ -45,13 +45,13 @@ in
     code-cursor-fhs
     discord
     adwaita-icon-theme
+    # Papirus ships recoloured folder variants; `color` runs papirus-folders at
+    # build time so the Papirus-Dark folders match the pink accent.
+    (papirus-icon-theme.override { color = "pink"; })
     adwaita-qt
     gnome-themes-extra
     kdePackages.qt6ct
     libsForQt5.qt5ct
-    thunar
-    thunar-archive-plugin
-    thunar-volman
     tumbler
     ffmpegthumbnailer
     file-roller

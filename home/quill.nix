@@ -47,6 +47,214 @@ let
     font="Inter,10,-1,5,50,0,0,0,0,0"
   '';
 
+  gtkPaletteCss = ''
+    @define-color theme_bg_color ${palette.black};
+    @define-color theme_fg_color ${palette.text};
+    @define-color theme_base_color ${palette.black};
+    @define-color theme_text_color ${palette.text};
+    @define-color theme_selected_bg_color ${palette.pink};
+    @define-color theme_selected_fg_color ${palette.text};
+    @define-color accent_bg_color ${palette.pink};
+    @define-color accent_color ${palette.pinkStrong};
+    @define-color window_bg_color ${palette.black};
+    @define-color window_fg_color ${palette.text};
+    @define-color view_bg_color ${palette.black};
+    @define-color view_fg_color ${palette.text};
+    @define-color headerbar_bg_color ${palette.surface};
+    @define-color headerbar_fg_color ${palette.text};
+    @define-color sidebar_bg_color ${palette.surface};
+    @define-color sidebar_fg_color ${palette.muted};
+    @define-color sidebar_backdrop_color ${palette.surface};
+    @define-color borders ${palette.surfaceStrong};
+    @define-color insensitive_fg_color ${palette.muted};
+
+    * {
+      caret-color: ${palette.pink};
+      outline-color: alpha(${palette.pink}, 0.7);
+      -gtk-outline-radius: 6px;
+    }
+
+    window,
+    .background {
+      background-color: ${palette.black};
+      color: ${palette.text};
+    }
+
+    window.thunar,
+    window.thunar paned,
+    window.thunar scrolledwindow,
+    window.thunar viewport,
+    window.thunar .view {
+      background-color: ${palette.black};
+      color: ${palette.text};
+    }
+
+    headerbar,
+    toolbar,
+    .primary-toolbar,
+    window.thunar toolbar {
+      background: ${palette.surface};
+      color: ${palette.text};
+      border-bottom: 1px solid ${palette.surfaceStrong};
+      box-shadow: none;
+    }
+
+    menubar,
+    menu,
+    menuitem,
+    popover,
+    popover.background {
+      background-color: ${palette.surface};
+      color: ${palette.text};
+    }
+
+    menuitem:hover,
+    modelbutton:hover,
+    popover modelbutton:hover {
+      background-color: ${palette.surfaceStrong};
+      color: ${palette.pinkStrong};
+    }
+
+    button,
+    button.flat,
+    .path-bar button,
+    window.thunar toolbar button {
+      min-height: 28px;
+      border-radius: 6px;
+      border: 1px solid transparent;
+      background: transparent;
+      color: ${palette.text};
+    }
+
+    button:hover,
+    button.flat:hover,
+    .path-bar button:hover,
+    window.thunar toolbar button:hover {
+      background: ${palette.surfaceWeak};
+      border-color: ${palette.surfaceStrong};
+      color: ${palette.pinkStrong};
+    }
+
+    button:checked,
+    button:active,
+    .path-bar button:checked,
+    .path-bar button:active {
+      background: ${palette.pink};
+      border-color: ${palette.pinkStrong};
+      color: ${palette.black};
+    }
+
+    entry,
+    spinbutton,
+    combobox button,
+    treeview.view,
+    iconview.view,
+    list,
+    list row {
+      background-color: ${palette.black};
+      color: ${palette.text};
+      border-color: ${palette.surfaceStrong};
+    }
+
+    entry {
+      border-radius: 6px;
+      padding: 4px 8px;
+      background-color: ${palette.surfaceWeak};
+      selection-background-color: ${palette.pink};
+      selection-color: ${palette.black};
+    }
+
+    entry:focus {
+      border-color: ${palette.pink};
+      box-shadow: 0 0 0 1px ${palette.pink};
+    }
+
+    placessidebar,
+    placessidebar list,
+    placessidebar row,
+    .sidebar,
+    .sidebar .view,
+    window.thunar .sidebar {
+      background-color: ${palette.surface};
+      color: ${palette.muted};
+    }
+
+    placessidebar row {
+      min-height: 30px;
+      border-radius: 6px;
+      margin: 2px 6px;
+      padding: 0 6px;
+    }
+
+    placessidebar row:hover,
+    .sidebar row:hover {
+      background-color: ${palette.surfaceWeak};
+      color: ${palette.text};
+    }
+
+    placessidebar row:selected,
+    placessidebar row:selected:hover,
+    .sidebar row:selected,
+    .sidebar row:selected:hover {
+      background-color: ${palette.pink};
+      color: ${palette.black};
+    }
+
+    /* The Thunar side pane is a treeview, so its selected row is a `.view:selected`
+       node (not a list `row`). Style it explicitly so it gets the pink accent rather
+       than falling through to a near-white default. */
+    .sidebar .view:selected,
+    .sidebar .view:selected:focus,
+    .sidebar .view:selected:hover {
+      background-color: ${palette.pink};
+      color: ${palette.black};
+    }
+
+    /* Thunar's ThunarIconRenderer colourises a selected file icon by MULTIPLYing the
+       icon against the view's background-color. It queries the :selected state when
+       the icon view has keyboard focus, but the :active state when it does not (i.e.
+       when the window is unfocused). A dark value multiplies the icon to black and
+       hides it, so BOTH :selected and :active must carry a light background-color
+       (multiplying by near-white ≈ identity, leaving the real icon visible). The
+       pink border/box-shadow still signals the selection. This is scoped to
+       `.standard-view` (the icon/detail file views) so it does NOT leak onto the
+       sidebar, which is also a treeview.
+
+       The label box and the icon multiply are decoupled on purpose: the icon
+       renderer reads only `background-color`, so that stays light to keep the icon
+       visible, while the visible label background is painted from `background-image`
+       (drawn on top by gtk_render_background) so the title box shows the pink accent
+       instead of a near-white block. */
+    .standard-view .view:selected,
+    .standard-view .view:selected:focus,
+    .standard-view .view:selected:hover,
+    .standard-view .view:active {
+      background-color: ${palette.text};
+      background-image: linear-gradient(${palette.pink}, ${palette.pink});
+      color: ${palette.black};
+      border-color: ${palette.pink};
+      box-shadow: inset 0 0 0 1px ${palette.pink};
+      -gtk-icon-effect: none;
+      -gtk-icon-shadow: none;
+    }
+
+    scrollbar {
+      background-color: ${palette.black};
+    }
+
+    scrollbar slider {
+      min-width: 6px;
+      min-height: 6px;
+      border-radius: 999px;
+      background-color: ${palette.pinkWeak};
+    }
+
+    scrollbar slider:hover,
+    scrollbar slider:active {
+      background-color: ${palette.pinkStrong};
+    }
+  '';
+
   kimi-code = pkgs.callPackage ../pkgs/kimi-code { };
   qmenu = inputs.qmenu.packages.${pkgs.system}.default;
   agent-usage = inputs.agent-usage.packages.${pkgs.system}.default;
@@ -289,6 +497,9 @@ in
         username = "quill";
         homeDirectory = "/home/quill";
         stateVersion = "26.05";
+        sessionPath = [
+          "$HOME/.local/bin"
+        ];
         packages = [
           kimi-yolo
           screenshot-selection
@@ -307,6 +518,17 @@ in
 
       programs.home-manager.enable = true;
       xdg.enable = true;
+
+      # Thunar 4.20 added a "file highlight" feature that draws an opaque selection
+      # box over the whole item (icon + name). With our dark theme that box covers
+      # the icon — most visibly in the unfocused/backdrop state, where the selected
+      # icon vanishes entirely. Disable it to restore the classic per-icon/per-name
+      # selection rendering. (Equivalent to View > "Show file highlight" unchecked.)
+      xfconf.settings = {
+        thunar = {
+          "misc-highlighting-enabled" = false;
+        };
+      };
 
       systemd.user.services.hyprpaper = {
         Unit = {
@@ -463,15 +685,16 @@ in
       '';
 
       # eww popup for the AgentUsage chip: per-provider logo + % bar + reset.
-      # Polling (`agent-usage --eww`) only runs while the window is open, gated
-      # by `usage_open`, which agent-usage-popup toggles. Note: eww's own string
-      # interpolation would be `''${...}` here, so we use the `{expr}` form
-      # instead and let Nix interpolate ${...} (store paths / palette).
+      # Polling (`agent-usage --eww`) only reads agent-usage's cache while the
+      # window is open, gated by `usage_open`, which agent-usage-popup toggles.
+      # Note: eww's own string interpolation would be `''${...}` here, so we use
+      # the `{expr}` form instead and let Nix interpolate ${...} (store paths /
+      # palette).
       xdg.configFile."eww/eww.yuck".text = ''
         (defvar usage_open false)
 
         (defpoll usage
-          :interval "30s"
+          :interval "5s"
           :run-while usage_open
           :initial "{\"cc\":{\"name\":\"Claude Code\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"cx\":{\"name\":\"Codex\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"km\":{\"name\":\"Kimi\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"5h\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"7d\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}},\"cu\":{\"name\":\"Cursor\",\"present\":true,\"shown\":true,\"error\":\"\",\"w1\":{\"label\":\"auto\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true},\"w2\":{\"label\":\"api\",\"pct\":0,\"state\":\"ok\",\"reset\":\"\",\"present\":true}}}"
           "${agent-usage}/bin/agent-usage --eww --providers cc,cx,km,cu --remaining")
@@ -634,7 +857,7 @@ in
         "org/gnome/desktop/interface" = {
           color-scheme = "prefer-dark";
           gtk-theme = "Adwaita-dark";
-          icon-theme = "Adwaita";
+          icon-theme = "Papirus-Dark";
         };
       };
 
@@ -830,16 +1053,20 @@ in
       xdg.configFile."gtk-3.0/settings.ini".text = ''
         [Settings]
         gtk-theme-name=Adwaita-dark
-        gtk-icon-theme-name=Adwaita
+        gtk-icon-theme-name=Papirus-Dark
         gtk-application-prefer-dark-theme=1
       '';
+
+      xdg.configFile."gtk-3.0/gtk.css".text = gtkPaletteCss;
 
       xdg.configFile."gtk-4.0/settings.ini".text = ''
         [Settings]
         gtk-theme-name=Adwaita-dark
-        gtk-icon-theme-name=Adwaita
+        gtk-icon-theme-name=Papirus-Dark
         gtk-application-prefer-dark-theme=1
       '';
+
+      xdg.configFile."gtk-4.0/gtk.css".text = gtkPaletteCss;
 
       xdg.configFile."qt6ct/qt6ct.conf".text = ''
         [Appearance]

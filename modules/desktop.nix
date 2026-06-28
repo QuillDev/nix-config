@@ -35,6 +35,17 @@
 
   programs.dconf.enable = true;
 
+  # Use the NixOS Thunar module rather than a bare package so that
+  # programs.xfconf is enabled and Thunar settings (e.g. disabling the 4.20
+  # file-highlight feature) actually persist via xfconfd.
+  programs.thunar = {
+    enable = true;
+    plugins = with pkgs; [
+      thunar-archive-plugin
+      thunar-volman
+    ];
+  };
+
   services.gvfs.enable = true;
   services.tumbler.enable = true;
 
