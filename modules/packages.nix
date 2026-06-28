@@ -7,7 +7,6 @@ let
     inherit (pkgs.stdenv.hostPlatform) system;
     config.allowUnfree = true;
   };
-  cua-driver = pkgs.callPackage ../pkgs/cua-driver { };
   kimi-code = pkgs.callPackage ../pkgs/kimi-code { };
   pulumi-bin = pkgs.callPackage ../pkgs/pulumi-bin { };
 in
@@ -46,7 +45,6 @@ in
     libxkbcommon
     fontconfig
     freetype
-    cua-driver
     code-cursor-fhs
     discord
     adwaita-icon-theme
