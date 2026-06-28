@@ -907,6 +907,11 @@ in
             rounding = 4
         }
 
+        # NaNotes is a transient overlay, not a tiled workspace app. Tauri can
+        # request always-on-top, but Hyprland decides whether clients tile; this
+        # compositor rule makes it behave like a pinned hover panel.
+        windowrule = match:class nanotes, float true, pin true, center true, size 560 760
+
         bind = ALT, Return, exec, $terminal
         bind = ALT, T, exec, $terminal
         bind = ALT, Space, exec, qmenu-launch    # qmenu launcher
