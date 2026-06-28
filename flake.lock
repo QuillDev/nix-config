@@ -20,6 +20,61 @@
         "type": "github"
       }
     },
+    "hermes-patches": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782591529,
+        "narHash": "sha256-A3x/1nBtICVkg+vfX8wuWjstWr7xrT4mnSg3ocBraKY=",
+        "ref": "refs/heads/main",
+        "rev": "a635eaa459c1f6863ea68ad6ca05eb53e1d814cf",
+        "revCount": 14,
+        "type": "git",
+        "url": "ssh://git@github.com/QuillDev/hermes-patches.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/QuillDev/hermes-patches.git"
+      }
+    },
+    "hermes-setup": {
+      "inputs": {
+        "hermes-patches": "hermes-patches",
+        "hermes-upstream": "hermes-upstream",
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1782604726,
+        "narHash": "sha256-aC5J9HlwDJI9JPQjKkWNCFnT4UiDgC+zUZOYPYXuJ5w=",
+        "ref": "refs/heads/main",
+        "rev": "6f5d8a53f74f04c51c0e748e29c2ef277f30028b",
+        "revCount": 2,
+        "type": "git",
+        "url": "ssh://git@github.com/QuillDev/hermes-setup.git"
+      },
+      "original": {
+        "type": "git",
+        "url": "ssh://git@github.com/QuillDev/hermes-setup.git"
+      }
+    },
+    "hermes-upstream": {
+      "flake": false,
+      "locked": {
+        "lastModified": 1782590631,
+        "narHash": "sha256-RtOa/IKiskxGVKnAY7KCOed0OQVdthKugxNkXAS9ARM=",
+        "owner": "NousResearch",
+        "repo": "hermes-agent",
+        "rev": "ef17cd204d7583c31fe1ace9255077f8c736b47e",
+        "type": "github"
+      },
+      "original": {
+        "owner": "NousResearch",
+        "repo": "hermes-agent",
+        "rev": "ef17cd204d7583c31fe1ace9255077f8c736b47e",
+        "type": "github"
+      }
+    },
     "home-manager": {
       "inputs": {
         "nixpkgs": [
@@ -117,6 +172,7 @@
     "root": {
       "inputs": {
         "agent-usage": "agent-usage",
+        "hermes-setup": "hermes-setup",
         "home-manager": "home-manager",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",

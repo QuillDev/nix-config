@@ -31,6 +31,11 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    hermes-setup = {
+      url = "git+ssh://git@github.com/QuillDev/hermes-setup.git";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     home-manager = {
       url = "github:nix-community/home-manager/release-26.05";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -42,6 +47,7 @@
       system = "x86_64-linux";
       specialArgs = { inherit inputs; };
       modules = [
+        inputs.hermes-setup.nixosModules.default
         ./configuration.nix
         home-manager.nixosModules.home-manager
       ];

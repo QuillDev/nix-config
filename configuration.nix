@@ -6,6 +6,7 @@
     ./modules/desktop.nix
     ./modules/docker.nix
     ./modules/gaming.nix
+    ./modules/hermes.nix
     ./modules/packages.nix
     ./home/quill.nix
   ];
