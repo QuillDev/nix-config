@@ -45,11 +45,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782606251,
-        "narHash": "sha256-J9D3DXTW+kmpFetaCACY9r2ZfNi376MRCxfgqQvu4Xk=",
+        "lastModified": 1782606374,
+        "narHash": "sha256-lVdCpgHzOe1ljg2bhTpVsVEqzEO6kIZ9JZOaMeJ9yn8=",
         "ref": "refs/heads/main",
-        "rev": "bfe65e112fe6b53156d266d923d3e546ad4c57bb",
-        "revCount": 5,
+        "rev": "74ceee6588d8767888bee355f0c689692a846aab",
+        "revCount": 7,
         "type": "git",
         "url": "ssh://git@github.com/QuillDev/hermes-setup.git"
       },
