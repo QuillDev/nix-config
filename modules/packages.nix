@@ -23,6 +23,7 @@ in
     gh
     ripgrep
     bun
+    openssl
 
     # Rust toolchain — qmenu and other local crates are built here regularly.
     # pkg-config + the native libs let `cargo build` find wayland/xkb/fontconfig
@@ -34,6 +35,7 @@ in
     rust-analyzer
     pkg-config
     python3
+    snowflake-cli
     gnumake
     gcc
     nodejs
@@ -57,6 +59,10 @@ in
     file-roller
     gvfs
     ghostty
+    # LibreOffice Calc is the OpenOffice-style spreadsheet/Excel equivalent.
+    libreoffice-qt6
+    hunspell
+    hunspellDicts.en_US
     pkgs-unstable.codex
     pkgs-unstable.claude-code
     kimi-code

@@ -513,6 +513,7 @@ in
           pkgs.eww
           pkgs.kdePackages.qt6ct
           pkgs.libsForQt5.qt5ct
+          pkgs.qview
         ];
       };
 
@@ -550,6 +551,7 @@ in
         enable = true;
         shellAliases = {
           cc = "IS_SANDBOX=1 claude --dangerously-skip-permissions";
+          nako = "hermes";
           sudo = "sudo ";
         };
       };
@@ -560,6 +562,7 @@ in
           # `sudo `-with-trailing-space is a bash alias-expansion hack and is
           # unnecessary in fish, so only the meaningful alias is ported.
           cc = "IS_SANDBOX=1 claude --dangerously-skip-permissions";
+          nako = "hermes";
           # Default the nicer tools. `ll`/`la` keep the long/all views handy;
           # `cat` -> bat for syntax-highlighted paging.
           ls = "eza --git --icons=auto";
@@ -1131,6 +1134,15 @@ in
         defaultApplications = {
           "inode/directory" = [ "thunar.desktop" ];
           "application/x-gnome-saved-search" = [ "thunar.desktop" ];
+          "image/bmp" = [ "com.interversehq.qView.desktop" ];
+          "image/gif" = [ "com.interversehq.qView.desktop" ];
+          "image/heic" = [ "com.interversehq.qView.desktop" ];
+          "image/heif" = [ "com.interversehq.qView.desktop" ];
+          "image/jpeg" = [ "com.interversehq.qView.desktop" ];
+          "image/png" = [ "com.interversehq.qView.desktop" ];
+          "image/svg+xml" = [ "com.interversehq.qView.desktop" ];
+          "image/tiff" = [ "com.interversehq.qView.desktop" ];
+          "image/webp" = [ "com.interversehq.qView.desktop" ];
         };
       };
     };

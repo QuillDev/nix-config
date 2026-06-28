@@ -7,6 +7,7 @@
     ./modules/docker.nix
     ./modules/gaming.nix
     ./modules/hermes.nix
+    ./modules/local-ai.nix
     ./modules/packages.nix
     ./home/quill.nix
   ];
