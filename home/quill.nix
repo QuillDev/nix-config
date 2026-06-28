@@ -999,7 +999,7 @@ in
       xdg.configFile."hypr/hyprpaper.conf".text = ''
         wallpaper {
             monitor = *
-            path = ${../assets/wallpapers/thumb-1920-827218.png}
+            path = ${../assets/wallpapers/hanekawa.png}
             fit_mode = cover
         }
         splash = false
