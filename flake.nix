@@ -24,6 +24,12 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
 
+    # Rolling: local Markdown scratchpad app packaged by its upstream flake.
+    nanotes = {
+      url = "github:QuillDev/nanotes";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
+
     # Rolling: AI coding-agent usage limits for the ashell bar. Bumped via
     # `nix flake update agent-usage`.
     agent-usage = {

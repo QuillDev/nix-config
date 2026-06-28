@@ -77,5 +77,6 @@ in
     slurp
     hyprpaper
     inputs.zen-browser.packages.${pkgs.stdenv.hostPlatform.system}.default
+    inputs.nanotes.packages.${pkgs.stdenv.hostPlatform.system}.default
   ];
 }

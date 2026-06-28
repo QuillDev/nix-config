@@ -117,6 +117,26 @@
         "type": "github"
       }
     },
+    "nanotes": {
+      "inputs": {
+        "nixpkgs": [
+          "nixpkgs"
+        ]
+      },
+      "locked": {
+        "lastModified": 1782670196,
+        "narHash": "sha256-phySrtj90pf6GwTJqumf0ihp8HruAQT1Yd8MQtb3xOA=",
+        "owner": "QuillDev",
+        "repo": "nanotes",
+        "rev": "e65bd1118eac7bd254f71b2d10a089e5e311d04b",
+        "type": "github"
+      },
+      "original": {
+        "owner": "QuillDev",
+        "repo": "nanotes",
+        "type": "github"
+      }
+    },
     "nixpkgs": {
       "locked": {
         "lastModified": 1781216227,
@@ -174,6 +194,7 @@
         "agent-usage": "agent-usage",
         "hermes-setup": "hermes-setup",
         "home-manager": "home-manager",
+        "nanotes": "nanotes",
         "nixpkgs": "nixpkgs",
         "nixpkgs-unstable": "nixpkgs-unstable",
         "qmenu": "qmenu",
