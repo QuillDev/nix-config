@@ -19,6 +19,7 @@ in
   environment.systemPackages = with pkgs; [
     vim
     wget
+    unzip
     git
     gh
     ripgrep
