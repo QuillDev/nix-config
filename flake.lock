@@ -124,11 +124,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1782677058,
-        "narHash": "sha256-eCccg/HbdLZhfbVdOlsDTihK/vHyvLByj/RBbNhcNFw=",
+        "lastModified": 1782678251,
+        "narHash": "sha256-KPfSd3fA5e05qkARUkoQxeaG0xMtzTNYoXdiDUBXtCw=",
         "owner": "QuillDev",
         "repo": "nanotes",
-        "rev": "dac6b09c053282b5a217413f0271fec36b83f954",
+        "rev": "3ee3a2be19097087a1e10c5a0dad6c371d3f250e",
         "type": "github"
       },
       "original": {
